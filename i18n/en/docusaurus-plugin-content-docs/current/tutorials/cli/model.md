@@ -810,3 +810,116 @@ Flags:
 | mediumblob                                           | string                                           |
 | tinyblob                                             | string                                           |
 | ltree                                                | []byte                                           |
+
+
+### type mapping customization
+
+Type mapping customization can only be used in the experimental version. For how to enable the experimental version, please refer to <a href="docs/tutorials/cli/env" target="_blank">goctl env</a>，For configuration use, please refer to <a href="docs/tutorials/cli/config" target="_blank">goctl config</a>
+
+Example 1. Modify decimal to decimal. Decimal type
+
+1. Initialize configuration in projects that need to generate models
+```bash
+$ goctl config init
+goctl.yaml generated in ~/workspace/go-zero/tools/goctl/goctl.yaml
+```
+2. Modify the type mapping relationship
+
+The grey shading is a custom mapping type.
+
+```yaml {10-13}
+model:
+  types_map:
+    bigint:
+      null_type: sql.NullInt64
+      type: int64
+      unsigned_type: uint64
+    dec:
+      null_type: sql.NullFloat64
+      type: float64
+    decimal:
+      null_type: decimal.NullDecimal
+      pkg: github.com/shopspring/decimal
+      type: decimal.Decimal
+    ...
+```
+
+### Add type mappings not supported by goctl built-in
+
+We have a pg in the table with data type `inet`.
+
+```SQL
+-- auto-generated definition
+create table student
+(
+    id          integer                               not null
+        constraint student_pk
+            primary key,
+    name        varchar default ''::character varying not null,
+    age         integer default 0                     not null,
+    description integer                               not null,
+    ip_address  inet    default '0.0.0.0'::inet       not null
+);
+
+alter table student
+    owner to postgres;
+
+```
+
+Currently goctl built-in type mappings do not support types, so goctl will report an error as follows:
+
+```bash
+$ goctl model pg datasource --url="postgres://postgres:postgrespw@127.0.0.1:55000/postgres?sslmode=disable" --table="user,student" --dir . 
+Error: unsupported database type: inet
+```
+
+To solve the above problem, in the past, the goctl version was not supported. You could only add rules to the built-in type mapping rules, and then send the version, but now you only need to add a type mapping rule in the configuration file.
+
+> Provided that the goctl version is greater than or equal to 1.6.4, and the experimental function is started
+
+1. Check if the goctl version meets the conditions
+
+```bash
+$ goctl env
+GOCTL_OS=darwin
+GOCTL_ARCH=arm64
+GOCTL_HOME=/Users/sh00414ml/.goctl
+GOCTL_DEBUG=False
+GOCTL_CACHE=/Users/sh00414ml/.goctl/cache
+GOCTL_EXPERIMENTAL=on # If the experimental function tube is off, it needs to be turned on. The opening command is goctl env -w GOCTL_EXPERIMENTAL = on
+GOCTL_VERSION=1.6.4 # goctl version
+PROTOC_VERSION=3.19.4
+PROTOC_GEN_GO_VERSION=v1.28.0
+PROTO_GEN_GO_GRPC_VERSION=1.2.0
+```
+
+2. Initialize goctl configuration in the target project
+
+```bash
+$ goctl config
+goctl.yaml generated in ~/demo/goctl-config/goctl.yaml # This is based on the output of your own computer, which is for reference only.
+```
+
+3. Modify goctl.yaml
+
+To increase the target data type and mapping relationship, add an inet mapping here. The example is as follows: Grey shading
+
+```yaml {8-10}
+model:
+  types_map:
+    bigint:
+      null_type: sql.NullInt64
+      type: int64
+      unsigned_type: uint64
+    ...
+    inet:
+      null_type: sql.NullString
+      type: string
+```
+
+4. Generate model code again
+
+```bash
+goctl model pg datasource --url="postgres://postgres:postgrespw@127.0.0.1:55000/postgres?sslmode=disable" --table="user,student" --dir . 
+Done.
+```

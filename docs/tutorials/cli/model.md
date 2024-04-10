@@ -659,7 +659,7 @@ Global Flags:
 | ignore-columns | []string | NO | `nil` | 需要忽略的字段，插入或者更新时需要忽略的字段，如 `create_time` |
 | strict | boolean | NO | `false` | 是否是严格模式，如果是严格模式下，会对 `unsigned` 修饰的字段转换为对应的数据类型，主要针对数值型，例如：如果数据库中列为 `bigint` 类型，如果为`unsigned` 修饰则对应的 golang 数据类型就为 `int64`，否则为 `uint64`，如果 strict 为 false，则不关注 `unsigned` 修饰 |
 
-#### MySQL 类型映射关系
+#### MySQL 类型映射关系(稳定版本)
 
 <Tabs>
 
@@ -923,3 +923,118 @@ Flags:
 |mediumblob      |string|
 |tinyblob        |string|
 |ltree           |[]byte|
+
+
+### 类型映射自定义
+
+类型映射自定义只有试验版本才能使用，关于如何开启试验版本，请参考 <a href="docs/tutorials/cli/env" target="_blank">goctl env</a>，关于配置使用请参考 <a href="docs/tutorials/cli/config" target="_blank">goctl config</a>
+
+示例 1. 修改 decimal 为 decimal.Decimal 类型
+
+1. 在需要生成 model 的工程中初始化配置
+```bash
+$ goctl config init
+goctl.yaml generated in ~/workspace/go-zero/tools/goctl/goctl.yaml
+```
+2. 修改类型映射关系
+
+灰色底纹部分为自定义映射类型。
+
+```yaml {10-13}
+model:
+  types_map:
+    bigint:
+      null_type: sql.NullInt64
+      type: int64
+      unsigned_type: uint64
+    dec:
+      null_type: sql.NullFloat64
+      type: float64
+    decimal:
+      null_type: decimal.NullDecimal
+      pkg: github.com/shopspring/decimal
+      type: decimal.Decimal
+    ...
+```
+
+### 添加 goctl 内置不支持的类型映射
+
+我们在表中有一个 pg 的数据类型为 inet
+
+```SQL
+-- auto-generated definition
+create table student
+(
+    id          integer                               not null
+        constraint student_pk
+            primary key,
+    name        varchar default ''::character varying not null,
+    age         integer default 0                     not null,
+    description integer                               not null,
+    ip_address  inet    default '0.0.0.0'::inet       not null
+);
+
+alter table student
+    owner to postgres;
+
+```
+
+目前 goctl 内置类型映射不支持的类型，因此 goctl 会报错如下：
+
+```bash
+$ goctl model pg datasource --url="postgres://postgres:postgrespw@127.0.0.1:55000/postgres?sslmode=disable" --table="user,student" --dir . 
+Error: unsupported database type: inet
+```
+
+要解决如上问题，在以往 goctl 版本是不支持的，只能给内置类型映射规则添加规则，然后再发版本，但是现在只需要在配置文件中添加一条类型映射规则皆可。
+
+> 前提要 goctl 版本大于等于 1.6.4，且开始实验性功能
+
+1. 查看 goctl 版本是否满足条件
+
+```bash
+$ goctl env
+GOCTL_OS=darwin
+GOCTL_ARCH=arm64
+GOCTL_HOME=/Users/sh00414ml/.goctl
+GOCTL_DEBUG=False
+GOCTL_CACHE=/Users/sh00414ml/.goctl/cache
+GOCTL_EXPERIMENTAL=on # 实验性功能管开如果为 off 则需要开启，开启命令为 goctl env -w GOCTL_EXPERIMENTAL=on
+GOCTL_VERSION=1.6.4 # goctl 版本
+PROTOC_VERSION=3.19.4
+PROTOC_GEN_GO_VERSION=v1.28.0
+PROTO_GEN_GO_GRPC_VERSION=1.2.0
+```
+
+2. 在目标工程项目中初始化 goctl 配置
+
+```bash
+$ goctl config
+goctl.yaml generated in ~/demo/goctl-config/goctl.yaml # 这里以自己电脑输出准，这里仅供参考
+```
+
+3. 修改 goctl.yaml
+
+增加目标数据类型及映射关系，这里添加一个 inet 的映射，示例如下灰色底纹部分
+
+```yaml {8-10}
+model:
+  types_map:
+    bigint:
+      null_type: sql.NullInt64
+      type: int64
+      unsigned_type: uint64
+    ...
+    inet:
+      null_type: sql.NullString
+      type: string
+```
+
+4. 再次生成 model 代码
+
+```bash
+goctl model pg datasource --url="postgres://postgres:postgrespw@127.0.0.1:55000/postgres?sslmode=disable" --table="user,student" --dir . 
+Done.
+```
+
+

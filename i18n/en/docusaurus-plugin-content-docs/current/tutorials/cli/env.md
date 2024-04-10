@@ -34,6 +34,37 @@ Flags:
 Use "goctl env [command] --help" for more information about a command.
 ```
 
+### goctl env
+
+The goctl env allows you to quickly view some of the current variables in the goctl environment, and provide this information to the maintainer when users report bugs.
+
+```bash
+$ goctl env
+GOCTL_OS=darwin 
+GOCTL_ARCH=arm64
+GOCTL_HOME=/Users/sh00414ml/.goctl
+GOCTL_DEBUG=False
+GOCTL_CACHE=/Users/sh00414ml/.goctl/cache
+GOCTL_EXPERIMENTAL=off
+GOCTL_VERSION=1.6.4
+PROTOC_VERSION=3.19.4
+PROTOC_GEN_GO_VERSION=v1.28.0
+PROTO_GEN_GO_GRPC_VERSION=1.2.0
+```
+
+| <img width={100}/> Field | <img width={200}/> Default Value | <img width={800}/> Description |
+| -- | --- | --- |
+| GOCTL_OS | Empty string | Operating System |
+| GOCTL_ARCH | Empty string | System Architecture |
+| GOCTL_HOME | Empty string | goctl configuration directory |
+| GOCTL_DEBUG | Empty string | Whether to enable debug mode, maintainer to use, enumeration values Ture, False |
+| GOCTL_CACHE | Empty string | cache directory |
+| GOCTL_EXPERIMENTAL | off | Whether to enable the experimental function, enumeration values [on,off] |
+| GOCTL_VERSION | Empty string | goctl version |
+| PROTOC_VERSION | Empty string | protoc version |
+| PROTOC_GEN_GO_VERSION | Empty string | protoc_gen_go plugin version |
+| PROTO_GEN_GO_GRPC_VERSION | Empty string | protoc_gen_go_grpc plugin version |
+
 ### goctl env check directive
 
 The goctl env check instructions are ready to quickly detect goctl dependency. If your environment is missing goctl, goctl env check gives a reminder accordingly.

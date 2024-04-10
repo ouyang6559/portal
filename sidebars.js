@@ -173,6 +173,7 @@ module.exports = {
                 'tutorials/cli/api',
                 'tutorials/cli/bug',
                 'tutorials/cli/completion',
+                'tutorials/cli/config',
                 'tutorials/cli/docker',
                 'tutorials/cli/env',
                 'tutorials/cli/kube',
