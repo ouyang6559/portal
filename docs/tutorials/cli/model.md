@@ -988,7 +988,7 @@ Error: unsupported database type: inet
 
 要解决如上问题，在以往 goctl 版本是不支持的，只能给内置类型映射规则添加规则，然后再发版本，但是现在只需要在配置文件中添加一条类型映射规则皆可。
 
-> 前提要 goctl 版本大于等于 1.6.4，且开始实验性功能
+> 前提要 goctl 版本大于等于 1.6.5，且开始实验性功能
 
 1. 查看 goctl 版本是否满足条件
 
@@ -1000,7 +1000,7 @@ GOCTL_HOME=/Users/sh00414ml/.goctl
 GOCTL_DEBUG=False
 GOCTL_CACHE=/Users/sh00414ml/.goctl/cache
 GOCTL_EXPERIMENTAL=on # 实验性功能管开如果为 off 则需要开启，开启命令为 goctl env -w GOCTL_EXPERIMENTAL=on
-GOCTL_VERSION=1.6.4 # goctl 版本
+GOCTL_VERSION=1.6.5 # goctl 版本
 PROTOC_VERSION=3.19.4
 PROTOC_GEN_GO_VERSION=v1.28.0
 PROTO_GEN_GO_GRPC_VERSION=1.2.0

@@ -875,7 +875,7 @@ Error: unsupported database type: inet
 
 To solve the above problem, in the past, the goctl version was not supported. You could only add rules to the built-in type mapping rules, and then send the version, but now you only need to add a type mapping rule in the configuration file.
 
-> Provided that the goctl version is greater than or equal to 1.6.4, and the experimental function is started
+> Provided that the goctl version is greater than or equal to 1.6.5, and the experimental function is started
 
 1. Check if the goctl version meets the conditions
 
@@ -887,7 +887,7 @@ GOCTL_HOME=/Users/sh00414ml/.goctl
 GOCTL_DEBUG=False
 GOCTL_CACHE=/Users/sh00414ml/.goctl/cache
 GOCTL_EXPERIMENTAL=on # If the experimental function tube is off, it needs to be turned on. The opening command is goctl env -w GOCTL_EXPERIMENTAL = on
-GOCTL_VERSION=1.6.4 # goctl version
+GOCTL_VERSION=1.6.5 # goctl version
 PROTOC_VERSION=3.19.4
 PROTOC_GEN_GO_VERSION=v1.28.0
 PROTO_GEN_GO_GRPC_VERSION=1.2.0
