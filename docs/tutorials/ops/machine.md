@@ -123,7 +123,7 @@ alt='gitlab-pz-jenkins-sshkey'
 
 核心思路：
 
-- 使用 jenkins 打包出来项目的二进制文件一级配置文件，打成一个压缩包
+- 使用 jenkins 打包出来项目的二进制文件以及配置文件，打成一个压缩包
 - 将压缩包同步到部署机器，使用 nohup 启动即可（或者 supervisor、systemd）
 
 在编写 pipline 之前，因为我们需要在 jenkins 中构建 go 程序所以需要 go 环境，因为我们这次的 jenkins 是使用 docker 安装的(如果你是裸机安装的 jenkins 只需要在服务器上安装 go 环境就可以了)，那么我们要在 jenkins 容器内需要有 go 环境才可以，这里提供有 3 个办法
